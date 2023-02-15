@@ -1,6 +1,6 @@
 # My First React App
 > MySQL, ExpressJS, ReactJS, NodeJS HTML, TailwindCSS
-# Libraries Used
+#  NPM Packages used
  ## Main React App
 > swal, axios
 ## Server
