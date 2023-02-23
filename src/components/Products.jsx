@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import useApi from "../custom/useApi";
 
 const ProductList = ({ data, setRequest, reFetch }) => {
-    const deleteProduct = (e) => {
-        setRequest('http://localhost:3307/delete_product/' + e, 'DELETE');
+    const deleteProduct = (delete_id) => {
+        setRequest('http://localhost:3307/delete_product/' + delete_id, 'DELETE');
         //* without this even after the delete request is initiated it doesn't refresh the list so the setTimeout function was added, took me 3 hours to figure it out, hehe, silly me
         setTimeout(() => {
             reFetch();
@@ -47,9 +47,20 @@ const ProductList = ({ data, setRequest, reFetch }) => {
                     }
                 </tbody>
             </table>
-            <p className="sticky bottom-0 left-0 w-full bg-white z-10 p-1  text-end">Rows : {data.length}</p>
+            <p className="sticky bottom-0 left-0 w-full bg-white z-10 p-1  text-end">Results : {data.length}</p>
         </>
 
+    )
+}
+
+const FindProductForm = ({ handleChange, handleKeyPress, response, fetchData, findProduct }) => {
+    return (
+        <form className='flex gap-2 items-center justify-start' onSubmit={findProduct}>
+            <input onKeyDown={handleKeyPress} onChange={handleChange} required className='border-2 border-orange-400 p-2 rounded-md' type="text" name="search_product" id="" placeholder='Search Products...' />
+            <button className='p-1 rounded-md bg-orange-400 text-white' type='submit'>Search</button>
+            {/* //? [reason->answer] of this */}
+            {response.length == 0 && <button type="button" onClick={fetchData} className='p-1 rounded-sm bg-slate-300'>Load Products</button>}
+        </form>
     )
 }
 
@@ -60,8 +71,9 @@ const Products = () => {
     const handleChange = (e) => {
         setInputValue(values => ({ ...values, [e.target.name]: e.target.value }));
     }
+
     // ? Doesnt accepts any enter spaces within the input
-    // * idk why added this, i even added the require attribute to the input, since without the server returns an error as it does not accept an empty input (e.g 'spaces') since it only accepts everything in JSON format, because the inputValue is what im passing to the server because there is nothing in there, could be server code issues (index.js)
+    // * idk why added this, i even added the require attribute to the input, since without the server returns an error as it does not accept an empty input (e.g 'spaces') since it only accepts everything in JSON format, because the payload inputValue is what im passing to the server because there is nothing in there, could be server code issues (index.js)
     const handleKeyPress = (e) => {
         e.key === " " && e.preventDefault();
     }
@@ -80,18 +92,10 @@ const Products = () => {
             request('http://localhost:3307/item/' + inputValue.search_product, 'GET', []);
     }
 
-
-
     return (
         <div className='p-4'>
             <h1 className='text-xl font-bold'>Products</h1>
-            <form className='flex gap-2 items-center justify-start' onSubmit={findProduct}>
-                <input onKeyDown={handleKeyPress} onChange={handleChange} required className='border-2 border-orange-400 p-1 rounded-md' type="text" name="search_product" id="" placeholder='Search Products...' />
-                <button className='p-1 rounded-md bg-orange-400 text-white' type='submit'>Search</button>
-                {/* //? [reason->answer] of this */}
-                {response.length == 0 && <button type="button" onClick={fetchData} className='p-1 rounded-sm bg-slate-300'>Load Products</button>}
-
-            </form>
+            <FindProductForm handleChange={handleChange} handleKeyPress={handleKeyPress} response={response} fetchData={fetchData} findProduct={findProduct} />
             <hr className='my-2 border border-orange-600' />
             <div className='h-[420px] max-h-[428px] overflow-y-scroll pr-2'>
                 <ProductList data={response} setRequest={request} reFetch={fetchData} />

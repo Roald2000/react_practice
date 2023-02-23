@@ -1,17 +1,11 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 
 import Products from './Products';
 import AddProduct from './AddProducts';
 import EditProduct from './EditProduct';
+import BuyProduct from './BuyProduct';
 
-const BuyProduct = () => {
-  return (
-    <div className='p-4'>
-      <h1 className='text-xl font-bold'>Buy Product</h1>
-    </div>
-  )
-}
 
 
 const MainBody = () => {
